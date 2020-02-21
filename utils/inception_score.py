@@ -20,7 +20,7 @@ MODEL_DIR = '/tmp/imagenet'
 DATA_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
 softmax = None
 
-config = tf.ConfigProto()
+config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth = True
 
 
@@ -78,11 +78,11 @@ def _init_inception():
     tarfile.open(filepath, 'r:gz').extractall(MODEL_DIR)
     with tf.gfile.FastGFile(os.path.join(
             MODEL_DIR, 'classify_image_graph_def.pb'), 'rb') as f:
-        graph_def = tf.GraphDef()
+        graph_def = tf.compat.v1.GraphDef()
         graph_def.ParseFromString(f.read())
         _ = tf.import_graph_def(graph_def, name='')
     # Works with an arbitrary minibatch size.
-    with tf.Session(config=config) as sess:
+    with tf.compat.v1.Session(config=config) as sess:
         pool3 = sess.graph.get_tensor_by_name('pool_3:0')
         ops = pool3.graph.get_operations()
         for op_idx, op in enumerate(ops):
